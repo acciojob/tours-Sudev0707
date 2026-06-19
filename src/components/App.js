@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import Tour from "./Tour";
+import Loading from "./Loading";
+import Tours from "./Tours";
 
 const App = () => {
   const [tours, setTours] = useState([]);
@@ -7,10 +8,15 @@ const App = () => {
 
   const fetchTours = async () => {
     setLoading(true);
-    const response = await fetch("https://course-api.com/react-tours-project");
-    const data = await response.json();
-    console.log(data);
-    setTours(data);
+    try {
+      const response = await fetch(
+        "https://course-api.com/react-tours-project"
+      );
+      const data = await response.json();
+      setTours(data);
+    } catch (error) {
+      console.log(error);
+    }
     setLoading(false);
   };
 
@@ -22,16 +28,14 @@ const App = () => {
     fetchTours();
   }, []);
 
-  // Loading state
   if (loading) {
     return (
       <main id="main">
-        <div className="loading">Loading...</div>
+        <Loading />
       </main>
     );
   }
 
-  // No tours left state
   if (tours.length === 0) {
     return (
       <main id="main">
@@ -46,10 +50,7 @@ const App = () => {
 
   return (
     <main id="main">
-      <h1 className="title">Our Tours</h1>
-      {tours.map((tour) => (
-        <Tour key={tour.id} {...tour} removeTour={removeTour} />
-      ))}
+      <Tours tours={tours} removeTour={removeTour} />
     </main>
   );
 };
